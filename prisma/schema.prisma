@@ -1,0 +1,110 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// Models
+ model User {
+    id_user  Int @id @default(autoincrement())
+    name String
+    email String @unique
+    password String
+    gender Boolean
+ 
+    posts Posts[]
+    comments Comments[]
+    likes Likes[]
+    user_roles User_roles[]
+}
+
+ model Posts {
+  id_post Int @id @default(autoincrement())
+  title String
+  content String?
+  category Category @relation(fields: [id_category], references: [id_category])
+  id_category Int
+  user User @relation(fields: [userId], references: [id_user])
+  userId Int @unique
+  comments Comments[]
+  likes Likes[]
+  files Files[]
+  posts_tags Posts_tags[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+ 
+}
+
+ model Comments {
+  id_comment Int @id @default(autoincrement())
+  contents String
+  posts Posts @relation(fields: [postId], references: [id_post])
+  postId Int
+  user User @relation(fields: [userId], references: [id_user])
+  userId Int
+  likes Likes[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+ }
+
+ model Category{
+  id_category Int @id @default(autoincrement())
+  name String
+  posts Posts[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+ }
+
+ model Likes{
+  id_like Int @id @default(autoincrement())
+  userId Int 
+  user User @relation(fields: [userId], references: [id_user])
+  postId Int
+  posts Posts @relation(fields: [postId], references: [id_post])
+  commentId Int
+  comments Comments @relation(fields: [commentId], references: [id_comment])
+ }
+
+ model Roles{
+  id_role Int @id @default(autoincrement())
+  name String
+  desc String?
+  user_roles User_roles[]
+ }
+
+ model Files{
+  id_file Int @id @default(autoincrement())
+  url String
+  type_file String
+  postId Int
+  posts Posts @relation(fields: [postId], references: [id_post])
+ }
+
+ model Tags {
+  id_tag Int @id @default(autoincrement())
+  name String
+  posts_tags Posts_tags[]
+ }
+
+ model Posts_tags{
+  postid Int @unique
+  posts Posts @relation(fields: [postid], references: [id_post])
+  tagId Int @unique
+  tags Tags @relation(fields: [tagId], references: [id_tag])
+ }
+
+ model User_roles {
+  userId Int @unique
+  user User @relation(fields: [userId], references: [id_user])
+  roleId Int @unique
+  role Roles @relation(fields: [roleId], references: [id_role])
+ }
