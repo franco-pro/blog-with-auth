@@ -11,7 +11,7 @@ const createRole = asyncHandler(async (req: Request, res: Response) => {
   const { name, desc } = req.body;
   const { id } = req.params;
   const existRole = await prisma.roles.findUnique({
-    where: { id_role: Number(id) },
+    where: { id_role: name },
   });
 
   if (!existRole) {
@@ -65,7 +65,7 @@ const updateRole = asyncHandler(async (req: Request, res: Response) => {
     where: { id_role: Number(id) },
   });
 
-  if (existRole) {
+  if (!existRole) {
     res.status(400);
     throw new Error("The role doesnt exist !!");
   }

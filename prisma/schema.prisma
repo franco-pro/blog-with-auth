@@ -31,8 +31,8 @@ datasource db {
   id_post Int @id @default(autoincrement())
   title String
   content String?
-  category Category @relation(fields: [id_category], references: [id_category])
-  id_category Int
+  category Category @relation(fields: [name_category], references: [name])
+  name_category String
   user User @relation(fields: [userId], references: [id_user])
   userId Int @unique
   comments Comments[]
@@ -58,7 +58,7 @@ datasource db {
 
  model Category{
   id_category Int @id @default(autoincrement())
-  name String
+  name String @unique
   posts Posts[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -76,7 +76,7 @@ datasource db {
 
  model Roles{
   id_role Int @id @default(autoincrement())
-  name String
+  name String @unique
   desc String?
   user_roles User_roles[]
  }
@@ -91,7 +91,7 @@ datasource db {
 
  model Tags {
   id_tag Int @id @default(autoincrement())
-  name String
+  name String @unique
   posts_tags Posts_tags[]
  }
 

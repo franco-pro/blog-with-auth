@@ -1,7 +1,6 @@
 import asyncHandler from "express-async-handler";
 import { Express, Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
-import { connect } from "http2";
 
 const prisma = new PrismaClient();
 
@@ -37,10 +36,10 @@ const createPost = asyncHandler(async (req: Request, res: Response) => {
       title,
       content,
       category: {
-        connect: { id_category: category.id_category },
+        connect: { id_category: id_category },
       },
       user: {
-        connect: { id_user: user.id_user },
+        connect: { id_user: userId },
       },
     },
   });
@@ -56,6 +55,19 @@ const readposts = asyncHandler(async (req: Request, res: Response) => {
   });
   res.status(200).json(posts);
 });
+
+//@desc read all posts of a category
+//@route /api/v1/:name_category/posts
+//@acess public
+const readAllPostsOfCategory = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { name_category } = req.params;
+    const posts = await prisma.posts.findMany({
+      where: { name_category: String(name_category) },
+    });
+    res.status(200).json(posts);
+  }
+);
 
 //@desc read a post
 //@access GET /api/v1/posts/:id
@@ -119,4 +131,11 @@ const deletePost = asyncHandler(async (req: Request, res: Response) => {
   res.status(204).json({ message: "role deleted successful" });
 });
 
-export { createPost, readposts, readOnePost, updatePost, deletePost };
+export {
+  createPost,
+  readposts,
+  readAllPostsOfCategory,
+  readOnePost,
+  updatePost,
+  deletePost,
+};
